@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  example-db:
+    container_name: example-db
+    image: postgres:12.3-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: local
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: host.docker.internal
+      # POSTGRES_HOST: 0.0.0.0
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - 5433:5432
+    networks:
+      - example-networks
+    volumes:
+      - ./setup/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data/
+
+volumes:
+  pgdata:
+
+networks:
+  example-networks:
+    name: example-networks
+    driver: bridge
